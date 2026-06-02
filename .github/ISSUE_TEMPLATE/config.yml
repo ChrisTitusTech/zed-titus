@@ -1,0 +1,6 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Support and usage questions
+    url: https://github.com/ChrisTitusTech/zed-titus/blob/main/.github/SUPPORT.md
+    about: Read the support guide before opening an issue.
+

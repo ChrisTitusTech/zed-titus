@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest a new configuration, keybinding, or task improvement.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion. Please be as specific as possible.
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: A short description of the feature request.
+      placeholder: "Add a keybinding to toggle soft wrap"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How should this work?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any alternative approaches or workarounds?
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Screenshots, links, or other details.
+
