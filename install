@@ -8,7 +8,9 @@ find_json_files() {
   shopt -s nullglob
   local files=("$SCRIPT_DIR"/*.json)
   shopt -u nullglob
-  echo "${files[@]}"
+  if [[ ${#files[@]} -gt 0 ]]; then
+    printf '%s\n' "${files[@]}"
+  fi
 }
 
 copy_json_files() {
