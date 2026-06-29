@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ZED_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/zed"
+REPO_URL="https://github.com/ChrisTitusTech/zed-titus.git"
+rm -rf $ZED_CONFIG_DIR
+git clone $REPO_URL $ZED_CONFIG_DIR
+shopt -s extglob
+rm -rf "$ZED_CONFIG_DIR"/!(*.json)
+shopt -u extglob
