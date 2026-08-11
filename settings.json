@@ -24,18 +24,6 @@
 		"kilo": {
 			"type": "registry",
 		},
-		"github-copilot-cli": {
-			"favorite_config_option_values": {
-    "model": [
-     "gpt-5.3-codex"
-    ]
-   },
-   "default_config_options": {
-    "allow_all": "on",
-    "model": "gpt-5.2-codex"
-   },
-   "type": "registry",
-		},
 		"gemini": {
 			"type": "registry",
 		},
@@ -52,9 +40,6 @@
 			"type": "registry",
 		},
 		"factory-droid": {
-			"type": "registry",
-		},
-		"github-copilot": {
 			"type": "registry",
 		},
 		"opencode": {
@@ -90,6 +75,9 @@
 	],
 	"show_whitespaces": "all",
 	"show_edit_predictions": false,
+	"edit_predictions": {
+		"provider": "none",
+	},
 	"hard_tabs": true,
 	"git_panel": {
 		"tree_view": true,
@@ -138,39 +126,36 @@
 		"left_padding": 0.15,
 		"right_padding": 0.15,
 	},
-	// Use Copilot Chat AI as default
+	// Route Zed-owned AI features through the local CLIProxyAPI service
 	"agent": {
 		"sidebar_side": "right",
-  "default_profile": "write",
+		"default_profile": "write",
 		"favorite_models": [
 			{
-				"provider": "copilot_chat",
-				"model": "claude-sonnet-4.6",
+				"provider": "CLIProxyAPI",
+				"model": "gpt-5.6-sol",
 				"enable_thinking": false,
-				"max_tokens": 128000,
 			},
 			{
-				"provider": "copilot_chat",
-				"model": "gpt-5.2-codex",
+				"provider": "CLIProxyAPI",
+				"model": "gpt-5.6-terra",
 				"enable_thinking": false,
-				"max_tokens": 128000,
 			},
 			{
-				"provider": "copilot_chat",
-				"model": "claude-opus-4.6",
+				"provider": "CLIProxyAPI",
+				"model": "gpt-5.6-luna",
 				"enable_thinking": false,
-				"max_tokens": 128000,
 			},
 		],
 		"dock": "right",
 		"inline_assistant_model": {
-			"provider": "copilot_chat",
-			"model": "auto",
+			"provider": "CLIProxyAPI",
+			"model": "gpt-5.6-sol",
 			"enable_thinking": false,
 		},
 		"default_model": {
-			"provider": "copilot_chat",
-			"model": "gpt-5.2-codex",
+			"provider": "CLIProxyAPI",
+			"model": "gpt-5.6-sol",
 			"enable_thinking": false,
 		},
 		"tool_permissions": {
@@ -193,6 +178,53 @@
 			"api_url": "http://localhost:11434",
 		},
 		"openai_compatible": {
+			"CLIProxyAPI": {
+				"api_url": "http://127.0.0.1:8317/v1",
+				"available_models": [
+					{
+						"name": "gpt-5.6-sol",
+						"display_name": "GPT-5.6 Sol (CLIProxyAPI)",
+						"max_tokens": 1050000,
+						"max_output_tokens": 128000,
+						"reasoning_effort": "medium",
+						"capabilities": {
+							"tools": true,
+							"images": true,
+							"parallel_tool_calls": true,
+							"prompt_cache_key": true,
+							"chat_completions": true,
+						},
+					},
+					{
+						"name": "gpt-5.6-terra",
+						"display_name": "GPT-5.6 Terra (CLIProxyAPI)",
+						"max_tokens": 1050000,
+						"max_output_tokens": 128000,
+						"reasoning_effort": "medium",
+						"capabilities": {
+							"tools": true,
+							"images": true,
+							"parallel_tool_calls": true,
+							"prompt_cache_key": true,
+							"chat_completions": true,
+						},
+					},
+					{
+						"name": "gpt-5.6-luna",
+						"display_name": "GPT-5.6 Luna (CLIProxyAPI)",
+						"max_tokens": 1050000,
+						"max_output_tokens": 128000,
+						"reasoning_effort": "medium",
+						"capabilities": {
+							"tools": true,
+							"images": true,
+							"parallel_tool_calls": true,
+							"prompt_cache_key": true,
+							"chat_completions": true,
+						},
+					},
+				],
+			},
 			"CrofAI": {
 				"api_url": "https://crof.ai/v1",
 				"available_models": [

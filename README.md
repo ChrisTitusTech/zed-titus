@@ -69,19 +69,24 @@ Windows (PowerShell, creates symlinks in `%APPDATA%\Zed`):
 - Redacts private values in logs/telemetry.
 
 ### AI / agent configuration
-- Edit predictions provider: **GitHub Copilot**.
-- Shows edit predictions.
+- Edit predictions are completely disabled, preventing an edit-prediction
+  provider such as GitHub Copilot from starting in the background.
 - Agent sidebar docked **right**, default profile **write**.
-- Default model: **copilot_chat / gpt-5.2-codex**.
+- Default model: **CLIProxyAPI / gpt-5.6-sol**.
 - Favorite models:
-  - copilot_chat / claude-sonnet-4.6
-  - copilot_chat / gpt-5.2-codex
-  - copilot_chat / claude-opus-4.6
-- Inline assistant model set to **copilot_chat / auto**.
+  - CLIProxyAPI / gpt-5.6-sol
+  - CLIProxyAPI / gpt-5.6-terra
+  - CLIProxyAPI / gpt-5.6-luna
+- Inline assistant model set to **CLIProxyAPI / gpt-5.6-sol**.
 - Tool permissions default **allow** for `fetch` and `terminal`.
-- Registers several agent servers (registry): `pi-acp`, `kilo`, `github-copilot-cli` (default model **gpt-5.2-codex**), `gemini`, `cursor`, `codex-acp`, `claude-acp`, `amp-acp`, `factory-droid`, `github-copilot`, `opencode` (favorite model **opencode-go/glm-5.1**).
+- Registers several optional agent servers (registry): `pi-acp`, `kilo`,
+  `gemini`, `cursor`, `codex-acp`, `claude-acp`, `amp-acp`,
+  `factory-droid`, and `opencode` (favorite model **opencode-go/glm-5.1**).
+- Does not register either GitHub Copilot agent server.
 
 ### Language models (custom providers)
+- `openai_compatible` provider **CLIProxyAPI** uses
+  `http://127.0.0.1:8317/v1` and exposes GPT-5.6 Sol, Terra, and Luna.
 - `ollama` API URL: `http://localhost:11434`.
 - `openai_compatible` provider **CrofAI** with several large-model entries, including:
   - Kimi K2.6 / K2.6 Precision
