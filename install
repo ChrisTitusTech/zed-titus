@@ -3,6 +3,9 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ZED_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/zed"
+LOCAL_BIN_DIR="${HOME}/.local/bin"
+LOCAL_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}"
+ZED_DESKTOP_FILE="${LOCAL_DATA_DIR}/applications/dev.zed.Zed.desktop"
 
 link_json_files() {
   shopt -s nullglob
@@ -24,4 +27,66 @@ link_json_files() {
   done
 }
 
+install_x11_wakeup_workaround() {
+  if [[ $(uname -s) != Linux ]]; then
+    return
+  fi
+
+  if ! command -v xdotool >/dev/null 2>&1; then
+    printf 'Skipping Zed X11 wake-up workaround: xdotool is not installed.\n' >&2
+    return
+  fi
+
+  local wrapper_source="${SCRIPT_DIR}/zed-x11-wakeup"
+  local wrapper_destination="${LOCAL_BIN_DIR}/zed"
+  local backup_root="${LOCAL_DATA_DIR}/zed-titus/backups"
+  local backup_dir
+  local desktop_temp
+
+  if [[ ! -x $wrapper_source ]]; then
+    printf 'Zed X11 wake-up wrapper is not executable: %s\n' "$wrapper_source" >&2
+    return 1
+  fi
+
+  mkdir -p "$LOCAL_BIN_DIR" "${LOCAL_DATA_DIR}/applications" "$backup_root"
+  backup_dir=$(mktemp -d "${backup_root}/$(date +%Y%m%d-%H%M%S).XXXXXX")
+  if [[ -e $wrapper_destination || -L $wrapper_destination ]]; then
+    cp -a "$wrapper_destination" "${backup_dir}/zed"
+  fi
+  if [[ -f $ZED_DESKTOP_FILE ]]; then
+    cp -a "$ZED_DESKTOP_FILE" "${backup_dir}/dev.zed.Zed.desktop"
+  fi
+
+  ln -sfn "$wrapper_source" "$wrapper_destination"
+  printf 'Linked %s -> %s\n' "$wrapper_destination" "$wrapper_source"
+
+  if [[ -f $ZED_DESKTOP_FILE ]]; then
+    desktop_temp=$(mktemp "${ZED_DESKTOP_FILE}.tmp.XXXXXX")
+    if ! awk -v wrapper="$wrapper_destination" '
+			/^TryExec=/ {
+				print "TryExec=" wrapper
+				next
+			}
+			/^Exec=/ {
+				sub(/^Exec=[^[:space:]]+/, "Exec=" wrapper)
+			}
+			{ print }
+		' "$ZED_DESKTOP_FILE" >"$desktop_temp"; then
+      rm -f "$desktop_temp"
+      return 1
+    fi
+    chmod --reference="$ZED_DESKTOP_FILE" "$desktop_temp"
+    mv -f "$desktop_temp" "$ZED_DESKTOP_FILE"
+    printf 'Updated %s to use %s\n' "$ZED_DESKTOP_FILE" "$wrapper_destination"
+    if command -v update-desktop-database >/dev/null 2>&1; then
+      update-desktop-database "${LOCAL_DATA_DIR}/applications"
+    fi
+  else
+    printf 'Zed desktop entry not found at %s; installed the CLI workaround only.\n' "$ZED_DESKTOP_FILE" >&2
+  fi
+
+  printf 'Backed up previous launchers in %s\n' "$backup_dir"
+}
+
 link_json_files
+install_x11_wakeup_workaround

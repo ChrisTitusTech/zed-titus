@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REAL_ZED="${ZED_REAL_BIN:-$HOME/.local/zed.app/bin/zed}"
+WINDOW_CLASS='dev\.zed\.Zed'
+
+debug() {
+  if [[ ${ZED_X11_WAKE_DEBUG:-0} == 1 ]]; then
+    printf 'zed-x11-wakeup: %s\n' "$*" >&2
+  fi
+}
+
+wake_new_zed_window() {
+  local before_windows=$1
+  local attempt window_id
+
+  for ((attempt = 0; attempt < 150; attempt++)); do
+    while IFS= read -r window_id; do
+      [[ -n $window_id ]] || continue
+      if [[ -z $before_windows ]] || ! grep -Fxq "$window_id" <<<"$before_windows"; then
+        debug "waking X11 window $window_id"
+        xdotool key --window "$window_id" F13
+        return
+      fi
+    done < <(xdotool search --onlyvisible --class "$WINDOW_CLASS" 2>/dev/null || true)
+    sleep 0.02
+  done
+
+  debug 'no new Zed X11 window appeared before timeout'
+}
+
+if [[ ! -x $REAL_ZED ]]; then
+  printf 'zed-x11-wakeup: real Zed launcher is not executable: %s\n' "$REAL_ZED" >&2
+  exit 1
+fi
+
+case ${ZED_X11_WAKEUP:-1} in
+  0 | false | no) ;;
+  *)
+    if [[ ${XDG_SESSION_TYPE:-} == x11 && -n ${DISPLAY:-} ]] && command -v xdotool >/dev/null 2>&1; then
+      before_windows=$(xdotool search --onlyvisible --class "$WINDOW_CLASS" 2>/dev/null || true)
+      if [[ ${ZED_X11_WAKE_DEBUG:-0} == 1 ]]; then
+        wake_new_zed_window "$before_windows" &
+      else
+        wake_new_zed_window "$before_windows" </dev/null >/dev/null 2>&1 &
+      fi
+    fi
+    ;;
+esac
+
+exec "$REAL_ZED" "$@"

@@ -13,7 +13,16 @@ Linux/macOS (symlinks each JSON file into your Zed config folder):
 
 The installer uses `${XDG_CONFIG_HOME:-$HOME/.config}/zed` and replaces
 same-named files or symlinks so changes in this repository are picked up by
-Zed automatically.
+Zed automatically. On Linux, it also installs the `zed-x11-wakeup` launcher
+through `~/.local/bin/zed` and updates the user desktop entry. The launcher
+works around an intermittent X11 presentation race by sending an unused F13
+key event directly to each newly created Zed window. It requires `xdotool`,
+does nothing outside X11 sessions, and can be bypassed with
+`ZED_X11_WAKEUP=0`. Previous launchers are backed up below
+`~/.local/share/zed-titus/backups/`.
+
+Zed updates may restore the original CLI symlink or desktop entry. Rerun
+`./install` after an update to restore the workaround.
 
 Windows (PowerShell, creates symlinks in `%APPDATA%\Zed`):
 ```powershell
